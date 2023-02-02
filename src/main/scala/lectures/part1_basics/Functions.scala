@@ -1,5 +1,7 @@
 package lectures.part1_basics
 
+import scala.annotation.tailrec
+
 object Functions extends  App{
 
   def aFunction(a: String, b: Int): String = {
@@ -18,8 +20,6 @@ object Functions extends  App{
     if (n == 1) aString else aString + aRepeatedFunciton(aString, n-1)
   }
 
-  println(aRepeatedFunciton("Hello World ", 3))
-
   def aFunctionWithSideEffect(aString: String): Unit = println(aString)
 
   /*
@@ -33,9 +33,18 @@ object Functions extends  App{
     println("Hi my name is "+ name +" and I am "+ age +" years old")
   }
 
-  def aFactorialFunction(number: Int): Int ={
+  def aFactorialFunction(number: Int): BigInt ={
     if (number == 1 || number == 0) then 1
     else number*aFactorialFunction(number-1)
+  }
+
+
+  def aFactorialTailRecursion(n: Int): BigInt = {
+    @tailrec
+    def factHelper(x: Int, accumulator: BigInt): BigInt =
+      if (x <= 1 ) accumulator
+      else factHelper(x - 1, x * accumulator)
+    factHelper(n, 1)
   }
 
   def aFibonacciFunction(number: Int): Int ={
@@ -50,9 +59,54 @@ object Functions extends  App{
       else aPrimeNumberfunction(number, i + 1)
   }
 
-
+  // WHEN LOOPS ARE NEEDED USE TAIL RECURSION
   aGreetingFunction("Gonzalo", 22)
-  println(aFactorialFunction(number = 5))
+  println(aRepeatedFunciton("Hello World ", 3))
+  println(aFactorialTailRecursion(n = 50))
   println(aFibonacciFunction(number = 6))
   println(aPrimeNumberfunction(number = 971))
+
+
+
+  /*
+    1. Concatenate a string n times
+    2. IsPrime function tail recursive
+    3. Fibonacci function tail recursive
+  */
+
+
+  @tailrec
+  def aRepeatedTailRecursive(aString: String, n: Int, accumulator: String): String = {
+      if (n <= 0) accumulator
+      else aRepeatedTailRecursive(aString, n = n-1, aString+accumulator)
+  }
+
+
+
+  def aPrimeTailRecursive(n: Int): Boolean ={
+    @tailrec
+    def isPrimeTailRec(t: Int, Prime: Boolean): Boolean =
+      if !(Prime) then false
+      else if (t <= 1) true
+      else isPrimeTailRec(t - 1, n%t != 0 && Prime)
+
+    isPrimeTailRec(n / 2, true)
+  }
+
+
+  def aFibonacciTailRecursive(number: Int): Int ={
+    @tailrec
+    def fibonacciHelper(n: Int, last: Int, nextToLast: Int): Int =
+      if ( n >= number) last
+      else fibonacciHelper(n+1, last + nextToLast, last)
+
+    if (number <= 2) 1
+    else fibonacciHelper(3, 1, 1)
+  }
+
+
+  println(aRepeatedTailRecursive("Hello everyone ", 3, ""))
+  println(aPrimeTailRecursive(n = 2003))
+  println(aPrimeTailRecursive(n = 602))
+  println(aFibonacciTailRecursive(8))
 }
