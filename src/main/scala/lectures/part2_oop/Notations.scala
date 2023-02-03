@@ -70,5 +70,5 @@ object Notations extends App{
   println(mary learnsScala)
   println(mary(5))
 
-  
+
 }
