@@ -23,7 +23,7 @@ object AbstractDataTypes extends App {
   }
 
   class Crocodile extends Animal with Carnivore {
-    override val creatureType: String = "croc"
+    override val creatureType: String = "croc"a
     def eat: Unit = println("nom nom nom")
     def eat(animal: Animal): Unit = println(s"I'm a croc and I'm eating ${animal.creatureType}")
   }
