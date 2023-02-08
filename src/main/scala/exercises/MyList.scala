@@ -27,6 +27,7 @@ object Empty extends MyList{
   def isEmpty: Boolean = true
   def add(element: Int): MyList = new Cons(element, Empty)
   def printElements: String = ""
+
 }
 
 class Cons(h: Int, t: MyList) extends MyList{
@@ -39,6 +40,10 @@ class Cons(h: Int, t: MyList) extends MyList{
     if(t.isEmpty) ""+h
     else s"$h, ${t.printElements}"
   }
+
+
+
+
 
 }
 

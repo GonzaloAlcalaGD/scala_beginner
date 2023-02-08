@@ -1,8 +1,7 @@
 package lectures.part2_oop
 
-import exercises.{Cons, Empty}
 
-object Generics extends App{
+object Generics {
 
     class MyList[+A] {
      // use type A
@@ -67,16 +66,24 @@ abstract class MyList[A] {
   def add(element: A): MyList[A]
   def printElements: String
   override def toString: String = s"[$printElements]"
-
+  def map[B](transformer: MyTransformer[A, B]): MyList[B]
+//  def flatmap[B](transformer: MyTransformer[A, MyList[B]]): MyList[B]
+  def filter(predicate: MyPredicate[A]): MyList[A]
 }
 
-class Empty[A] extends MyList[A] {
+object Empty extends MyList[Nothing] {
 
-  def head: A = throw new NoSuchElementException
-  def tail: MyList[A] = throw new NoSuchElementException
+  def head: Nothing = throw new NoSuchElementException
+  def tail: MyList[Nothing] = throw new NoSuchElementException
   def isEmpty: Boolean = true
-  def add(element: A): MyList[A] = new Cons(element, new Empty[A])
+  def add(element: Nothing): MyList[Nothing] = new Cons(element, Empty)
   def printElements: String = ""
+
+  def map[B](transformer: MyTransformer[Nothing, B]): MyList[Nothing] =  Empty
+
+//  def flatmap[B](transformer: MyTransformer[Nothing, MyList[B]]): MyList[B]
+
+  def filter(predicate: MyPredicate[Nothing]): MyList[Nothing] = Empty
 
 }
 
@@ -90,23 +97,30 @@ class Cons[A](h: A, t: MyList[A]) extends MyList[A] {
     if (t.isEmpty) s"${h.toString}"
     else s"$h, ${t.printElements}"
   }
+  def map[B](transformer: MyTransformer[A, B]): MyList[B] = {
+    new Cons(transformer.transform(h), t.map(transformer))
+  }
+//  def flatmap[B](transformer: MyTransformer[A, MyList[B]]): MyList[B]
+  def filter(predicate: MyPredicate[A]): MyList[A] = {
+    if (predicate.testValue(h)) new Cons(h, t.filter(predicate))
+    else t.filter(predicate)
+  }
 
+}
+
+trait MyPredicate[-T] {
+  def testValue(value: T): Boolean
+}
+
+trait MyTransformer[-A, B] {
+  def transform(input: A): B
 }
 
 object ListTest extends App{
 
-  val listOfInts = new Cons(1, new Cons(2, new Cons(3, new Empty[Int])))
-  println(listOfInts.tail.tail.head)
-  println(listOfInts.add(4).head)
-  println(listOfInts)
+  val listOfIntegers: MyList[Int] = new Cons(1, new Cons(2, new Cons(3, Empty)))
 
-  val listOfStrings = new Cons("str1", new Cons("str2", new Cons("str3", new Empty[String])))
-  println(listOfStrings.tail.tail.head)
-  println(listOfStrings.add("str4").head)
-  println(listOfStrings)
-
-  val emptyListOfInts = new Empty[Int]
-  val emptyListOfStrings = new Empty[String]
-  println(emptyListOfInts.add(9))
-  println(emptyListOfStrings.add("Pete"))
+  println(listOfIntegers.map(new MyTransformer[Int, Int] {
+    override def transform(input: Int): Int = input * 2
+  }).toString)
 }
